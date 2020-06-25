@@ -36,4 +36,4 @@ jobs:
        upload_url:  ${{ steps.create_release.outputs.upload_url }}
        asset_path:  ./netScan/bin/Release/netcoreapp3.1/publish/netScan.exe
        asset_name: netScan.exe
-       asset_content_typer: application
+       asset_content_type: application
