@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "SoX/gNPz5yEHVYiVp1BVR74bpDxcue5wES1LYVyYfaMO6G7rtXLcS+ZJBXfWqvKl3JEW68bSyLEzPrG2JAxqTg==",
+  "dgSpecHash": "klNfL72RbUxf/n2Y6p0BQcO5qSsUGlvMUHeCbwctJR4i9j+OeoS37hnqFKR9NyAzeSeccVj0Od6fM7Vh5RdNoA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\alber\\source\\repos\\netScan\\netScan\\netScan\\netScan.csproj",
+  "projectFilePath": "C:\\Users\\alber\\source\\repos\\NetScan\\netScan\\netScan.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

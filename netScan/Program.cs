@@ -48,7 +48,17 @@ namespace netScan
 
         static void Main(string[] args)
         {
-            GetIps();
+
+            if (args.Contains("-ip"))
+            {
+                int i = Array.IndexOf(args, "-ip");
+                IP = IPAddress.Parse(args[i + 1]);
+            }
+            else
+            {
+                GetIps();
+            }
+
             Console.WriteLine("Starting scan...");
             Scanner scanner = new Scanner(IP.ToString());
             scanner.foudIp += printIp;

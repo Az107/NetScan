@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\alber\\source\\repos\\netScan\\netScan\\netScan\\netScan.csproj": {}
+    "C:\\Users\\alber\\source\\repos\\NetScan\\netScan\\netScan.csproj": {}
   },
   "projects": {
-    "C:\\Users\\alber\\source\\repos\\netScan\\netScan\\netScan\\netScan.csproj": {
+    "C:\\Users\\alber\\source\\repos\\NetScan\\netScan\\netScan.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\alber\\source\\repos\\netScan\\netScan\\netScan\\netScan.csproj",
+        "projectUniqueName": "C:\\Users\\alber\\source\\repos\\NetScan\\netScan\\netScan.csproj",
         "projectName": "netScan",
-        "projectPath": "C:\\Users\\alber\\source\\repos\\netScan\\netScan\\netScan\\netScan.csproj",
+        "projectPath": "C:\\Users\\alber\\source\\repos\\NetScan\\netScan\\netScan.csproj",
         "packagesPath": "C:\\Users\\alber\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\alber\\source\\repos\\netScan\\netScan\\netScan\\obj\\",
+        "outputPath": "C:\\Users\\alber\\source\\repos\\NetScan\\netScan\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Microsoft\\Xamarin\\NuGet\\",

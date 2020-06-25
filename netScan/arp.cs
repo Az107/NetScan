@@ -11,7 +11,17 @@ public class Arp
 	public Arp()
 	{
 		Process process = new Process();
-		ProcessStartInfo startInfo = new ProcessStartInfo("arp", "-a");
+		ProcessStartInfo startInfo = new ProcessStartInfo
+		{
+			FileName = "ARP.exe",
+			Arguments = "-a",
+			WindowStyle = ProcessWindowStyle.Hidden,
+			RedirectStandardOutput = true
+		};
+		process.StartInfo = startInfo;
+		process.Start();
+
+
 
 
 	}
