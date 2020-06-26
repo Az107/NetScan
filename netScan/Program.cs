@@ -68,8 +68,6 @@ namespace netScan
                 scanner.MaxThreads = int.Parse(args[i + 1]);
             }
 
-
-
             scanner.foudIp += printIp;
             scanner.Start();
             Console.WriteLine("finnished");

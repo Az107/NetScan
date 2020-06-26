@@ -7,9 +7,12 @@ using System.Diagnostics;
 public class Arp
 {
 	Dictionary<String, String> MacList = new Dictionary<string, string>();
+	String IP { get; set; }
 
-	public Arp()
+	public Arp(string ip)
 	{
+
+		IP = ip;
 		Process process = new Process();
 		ProcessStartInfo startInfo = new ProcessStartInfo
 		{
