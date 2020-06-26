@@ -23,6 +23,10 @@ public class Arp
 		};
 		process.StartInfo = startInfo;
 		process.Start();
+		while (!process.StandardOutput.EndOfStream)
+		{
+			string line = process.StandardOutput.ReadLine();
+		}
 
 
 
