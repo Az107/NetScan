@@ -61,6 +61,15 @@ namespace netScan
 
             Console.WriteLine("Starting scan...");
             Scanner scanner = new Scanner(IP.ToString());
+
+            if (args.Contains("-MaxThreads") || args.Contains("-mt")) { }
+            {
+                int i = Array.IndexOf(args, "-ip");
+                scanner.MaxThreads = int.Parse(args[i + 1]);
+            }
+
+
+
             scanner.foudIp += printIp;
             scanner.Start();
             Console.WriteLine("finnished");
