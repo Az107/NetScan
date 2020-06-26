@@ -2,9 +2,8 @@ name: .NET Core
 
 on:
   push:
-    branches: [master]
     tags:
-      - 'v*.*'
+      - 'v*'
 
 jobs:
   build:
@@ -29,8 +28,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
       with:
-        tag_name:  ${{ env.RELEASE_VERSION }}
-        release_name: Release ${{ env.RELEASE_VERSION }}
+        tag_name:  ${{  github.ref }}
+        release_name: Release ${{  github.ref }}
         body: automatic release
     - name: Upload Release
       uses: actions/upload-release-asset@v1.0.2
