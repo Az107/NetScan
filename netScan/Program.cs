@@ -32,7 +32,7 @@ namespace netScan
             if (Addrs.Keys.Count == 1) IP = Addrs.Keys.ToList()[0];
             else
             {
-                List<IPAddress> candidates = Addrs.Keys.Where(x => Regex.IsMatch(x.ToString(),@"^192\.168\.[0-3]\.")).ToList();
+                List<IPAddress> candidates = Addrs.Keys.Where(x => Regex.IsMatch(x.ToString(),@"^192\.168\.")).ToList();
                 if (candidates.Count > 0) IP = candidates[0];
                 else IP = Addrs.Keys.ToList()[0];
             }
@@ -41,15 +41,16 @@ namespace netScan
 
         }
 
-        static void printIp(string ip)
+        static void printIp(string ip,string mac)
         {
-            Console.WriteLine(ip);
+            Console.WriteLine($"{ip}{(mac == string.Empty? "":"------" + mac)}");
         }
 
         static void Main(string[] args)
         {
-
-            if (args.Contains("-ip"))
+            bool arguments = false;
+            
+            if (arguments && args.Contains("-ip"))
             {
                 int i = Array.IndexOf(args, "-ip");
                 IP = IPAddress.Parse(args[i + 1]);
@@ -62,7 +63,7 @@ namespace netScan
             Console.WriteLine("Starting scan...");
             Scanner scanner = new Scanner(IP.ToString());
 
-            if (args.Contains("-MaxThreads") || args.Contains("-mt")) { }
+            if (arguments && (args.Contains("-MaxThreads") || args.Contains("-mt"))) 
             {
                 int i = Array.IndexOf(args, "-ip");
                 scanner.MaxThreads = int.Parse(args[i + 1]);

@@ -13,12 +13,13 @@ public class Scanner
 	private List<bool> AllIpsD = new List<bool>();
 	private int threads = 0;
 	private int ActiveThreads = 0;
+	private Arp arp;
 
 	//private List<Thread> ActiveThreads = new List<Thread>();
 	public List<String> result = new List<string>();
 	public int MaxThreads = 100;
 
-	public delegate void FoundIp(String ip);
+	public delegate void FoundIp(String ip,String Mac);
 	public event FoundIp foudIp;
 
 	int last = 0;
@@ -32,6 +33,12 @@ public class Scanner
 		{
 			ip = AllIps[i];
 			if (AllIpsD[i]) continue;
+			else if (ip == IP)
+            {
+				AllIpsD[i] = true;
+				foudIp.Invoke(ip, "THIS DEVICE");
+				continue;
+			}
             else
             {
 				AllIpsD[i] = true;
@@ -53,8 +60,10 @@ public class Scanner
 		PingReply reply = ping.Send(IPAddress.Parse(ip),1000);
 		if (reply.Status == IPStatus.Success)
 		{
+			string mac = string.Empty;
+			if (arp.MacList.ContainsKey(ip)) mac = arp.MacList[ip];
 			result = true;
-			foudIp.Invoke(ip);
+			foudIp.Invoke(ip,mac);
 		}
 		return result;
     }
@@ -102,13 +111,10 @@ public class Scanner
                 }
             }
         }
-		return false;
+		return result;
     }
 
-	public async void StartAsync()
-    {
 
-    }
 
 	public List<String> Start()
     {
@@ -126,6 +132,7 @@ public class Scanner
 	public Scanner(String ip)
 	{
 		IP = ip;
+		arp = new Arp(ip);
 		LoadIps();
 
 	}
