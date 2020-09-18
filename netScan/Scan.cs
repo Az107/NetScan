@@ -4,10 +4,13 @@ using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Text;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Net.Sockets;
 
 public class Scanner
 {
-	private String IP { get; set; }
+	private IPAddress IP { get; set; }
 	private String Mask { get; set; }
 	private List<String> AllIps = new List<string>();
 	private List<bool> AllIpsD = new List<bool>();
@@ -33,7 +36,7 @@ public class Scanner
 		{
 			ip = AllIps[i];
 			if (AllIpsD[i]) continue;
-			else if (ip == IP)
+			else if (ip == IP.ToString())
             {
 				AllIpsD[i] = true;
 				foudIp.Invoke(ip, "THIS DEVICE");
@@ -57,7 +60,7 @@ public class Scanner
 	private bool TestIp(Ping ping,string ip)
     {
 		bool result = false;
-		PingReply reply = ping.Send(IPAddress.Parse(ip),1000);
+		PingReply reply = ping.Send(IPAddress.Parse(ip),100);
 		if (reply.Status == IPStatus.Success)
 		{
 			string mac = string.Empty;
@@ -71,7 +74,7 @@ public class Scanner
 	private void LoadIps()
     {
 		
-		String[] SiP = IP.Split('.');
+		String[] SiP = IP.ToString().Split('.');
 		String prefix = $"{SiP[0]}.{SiP[1]}.{SiP[2]}";
 		for (int i = 1;i < 255; i++)
         {
@@ -121,19 +124,67 @@ public class Scanner
 		ActiveThreads++;
 		new Thread(new ThreadStart(ThreadMaker)).Start();
 
-
+		int count = 0;
 		while (ActiveThreads > 0 )
 		{
 			Thread.Sleep(1000);
+			if (ActiveThreads <= 2) count++;
+			else count = 0;
+
+			if (count == 50) {
+				break; 
+			}
+			else if (count == 5) {
+				if (testCompleted()) break;
+            }
 		}
+
 		return result;
+	}
+
+
+	void GetIps()
+	{
+		IPAddress Mask = null;
+		Dictionary<IPAddress, IPAddress> Addrs = new Dictionary<IPAddress, IPAddress>();
+		NetworkInterface[] ifaces = NetworkInterface.GetAllNetworkInterfaces();
+			foreach (NetworkInterface ifaz in ifaces)
+			{
+				IPAddress ip, mask;
+				UnicastIPAddressInformation unicast = ifaz.GetIPProperties().UnicastAddresses.Where(u => u.Address.AddressFamily == AddressFamily.InterNetwork).FirstOrDefault();
+				ip = unicast.Address;
+				mask = unicast.IPv4Mask;
+				Addrs.Add(ip, mask);
+
+
+			}
+
+			if (Addrs.Keys.Count == 1) IP = Addrs.Keys.ToList()[0];
+			else
+			{
+				List<IPAddress> candidates = Addrs.Keys.Where(x => Regex.IsMatch(x.ToString(), @"^192\.168\.[0-3]\.")).ToList();
+				if (candidates.Count == 0)
+				{
+					candidates = Addrs.Keys.Where(x => Regex.IsMatch(x.ToString(), @"^192\.168\.")).ToList();
+				}
+				if (candidates.Count > 0) IP = candidates[0];
+				else IP = Addrs.Keys.ToList()[0];
+			}
+			Mask = Addrs[IP];
+
 	}
 
 	public Scanner(String ip)
 	{
-		IP = ip;
+		IP = IPAddress.Parse(ip);
 		arp = new Arp(ip);
 		LoadIps();
 
+	}
+	public Scanner()
+    {
+		GetIps();
+		arp = new Arp(IP.ToString());
+		LoadIps();
 	}
 }
