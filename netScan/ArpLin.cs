@@ -1,22 +1,27 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
-
-public class Arp
+public class ArpLin : IArp
 {
-	public Dictionary<String, String> MacList = new Dictionary<string, string>();
+    public Dictionary<String, String> MacList {get; set;}
+	
 	String IP { get; set; }
 
-	public Arp(string ip)
-	{
+	public string getMac(String ip){
+		string mac = String.Empty;
+		if (MacList.ContainsKey(ip)) mac = MacList[ip];
+		return mac;
+	}
 
+	public void Init(String ip){
+		MacList = new Dictionary<string, string>();
 		IP = ip;
 		Process process = new Process();
 		ProcessStartInfo startInfo = new ProcessStartInfo
 		{
-			FileName = "ARP.exe",
+			FileName = "ARP",
 			Arguments = "-a",
 			WindowStyle = ProcessWindowStyle.Hidden,
 			RedirectStandardOutput = true
@@ -39,9 +44,6 @@ public class Arp
 			
 
 		}
-
-
-
-
 	}
+    
 }

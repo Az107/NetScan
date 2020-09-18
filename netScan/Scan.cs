@@ -16,7 +16,7 @@ public class Scanner
 	private List<bool> AllIpsD = new List<bool>();
 	private int threads = 0;
 	private int ActiveThreads = 0;
-	private Arp arp;
+	private IArp arp;
 
 	//private List<Thread> ActiveThreads = new List<Thread>();
 	public List<String> result = new List<string>();
@@ -63,8 +63,7 @@ public class Scanner
 		PingReply reply = ping.Send(IPAddress.Parse(ip),100);
 		if (reply.Status == IPStatus.Success)
 		{
-			string mac = string.Empty;
-			if (arp.MacList.ContainsKey(ip)) mac = arp.MacList[ip];
+			string mac = arp.getMac(ip);
 			result = true;
 			foudIp.Invoke(ip,mac);
 		}
