@@ -25,27 +25,42 @@ public class Scanner
 	public event FoundIp foudIp;
 
 	int last = 0;
-
+	private int index = 0;
+	private readonly object pblock = new object();
+	private string IpAssignment(){
+		lock(pblock){
+			string result = "";
+			
+			if (index < AllIpsD.Count){
+				while (AllIpsD[index]){
+					index++;
+				}
+					result = AllIps[index];
+					AllIpsD[index] = true;
+					index ++;
+			}
+			return result;
+		}
+	}
 	private void Loop()
 	{
 
 		Ping ping = new Ping();
-		string ip;
-		for (int i = last;i < AllIps.Count;i++)
+		string ip ;
+		do
 		{
+			ip = IpAssignment();
 			if (!isAlive) break;
-			ip = AllIps[i];
-			if (AllIpsD[i]) continue;
-			else if (ip == IP.ToString())
+			
+			if (ip == IP.ToString())
             {
-				AllIpsD[i] = true;
+				IpResult.Add(ip);
 				foudIp.Invoke(ip, "THIS DEVICE");
 				continue;
 			}
             else
             {
-				AllIpsD[i] = true;
-				if (!IpResult.Contains(ip)){
+				if (!IpResult.Contains(ip) && ip != ""){
 					if (TestIp(ping,ip))
 					{
 						IpResult.Add(ip);
@@ -54,7 +69,7 @@ public class Scanner
 				}
 
             }
-		}
+		}while(ip != "");
 		ActiveThreads --;
 	}
 
@@ -65,7 +80,7 @@ public class Scanner
 		if (IpResult.Contains(ip)){
 			result = true;
 		} else{
-			PingReply reply = ping.Send(IPAddress.Parse(ip),100);
+			PingReply reply = ping.Send(IPAddress.Parse(ip));
 			if (reply.Status == IPStatus.Success)
 			{
 				string mac = arp.getMac(ip);
