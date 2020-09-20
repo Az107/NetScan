@@ -10,17 +10,16 @@ using System.Net.Sockets;
 
 public class Scanner
 {
+	private bool isAlive = false;
 	private IPAddress IP { get; set; }
 	private String Mask { get; set; }
 	private List<String> AllIps = new List<string>();
 	private List<bool> AllIpsD = new List<bool>();
-	private int threads = 0;
 	private int ActiveThreads = 0;
 	private IArp arp;
 
 	//private List<Thread> ActiveThreads = new List<Thread>();
-	public List<String> result = new List<string>();
-	public int MaxThreads = 100;
+	public List<String> IpResult = new List<string>(); 	public int MaxThreads = 50;
 
 	public delegate void FoundIp(String ip,String Mac);
 	public event FoundIp foudIp;
@@ -34,6 +33,7 @@ public class Scanner
 		string ip;
 		for (int i = last;i < AllIps.Count;i++)
 		{
+			if (!isAlive) break;
 			ip = AllIps[i];
 			if (AllIpsD[i]) continue;
 			else if (ip == IP.ToString())
@@ -45,10 +45,12 @@ public class Scanner
             else
             {
 				AllIpsD[i] = true;
-				if (TestIp(ping,ip))
-				{
-					result.Add(ip);
-					Thread.Sleep(1000);
+				if (!IpResult.Contains(ip)){
+					if (TestIp(ping,ip))
+					{
+						IpResult.Add(ip);
+						Thread.Sleep(1000);
+					}
 				}
 
             }
@@ -60,12 +62,16 @@ public class Scanner
 	private bool TestIp(Ping ping,string ip)
     {
 		bool result = false;
-		PingReply reply = ping.Send(IPAddress.Parse(ip),100);
-		if (reply.Status == IPStatus.Success)
-		{
-			string mac = arp.getMac(ip);
+		if (IpResult.Contains(ip)){
 			result = true;
-			foudIp.Invoke(ip,mac);
+		} else{
+			PingReply reply = ping.Send(IPAddress.Parse(ip),100);
+			if (reply.Status == IPStatus.Success)
+			{
+				string mac = arp.getMac(ip);
+				result = true;
+				foudIp.Invoke(ip,mac);
+			}
 		}
 		return result;
     }
@@ -85,9 +91,8 @@ public class Scanner
 	private void ThreadMaker()
     {
 
-		while (threads < MaxThreads)
+		while (ActiveThreads < MaxThreads && isAlive)
 		{
-			threads++;
 			ActiveThreads++;
 			new Thread(new ThreadStart(Loop)).Start();
 			Thread.Sleep(50);
@@ -98,21 +103,10 @@ public class Scanner
 	private bool testCompleted()
     {
 		bool result = false;
-		if (AllIpsD[AllIpsD.Count - 1])
-        {
-			foreach(bool ipd in AllIpsD)
-            {
-				if (!ipd)
-                {
-					result = false;
-					break;
-                }
-                else
-                {
-					result = true;
-                }
-            }
-        }
+		int unTested = AllIpsD.Where(t => !t).ToList().Count;
+		if (unTested == 0) result = true;
+		else result = false;
+
 		return result;
     }
 
@@ -120,25 +114,28 @@ public class Scanner
 
 	public List<String> Start()
     {
+		isAlive = true;
 		ActiveThreads++;
 		new Thread(new ThreadStart(ThreadMaker)).Start();
 
 		int count = 0;
 		while (ActiveThreads > 0 )
 		{
-			Thread.Sleep(1000);
 			if (ActiveThreads <= 2) count++;
 			else count = 0;
 
-			if (count == 50) {
+			if (count == 100) {
 				break; 
 			}
-			else if (count == 5) {
-				if (testCompleted()) break;
-            }
-		}
+			else if (count >= 5) {
+				//if (testCompleted()) break;
+            }else{
 
-		return result;
+				Thread.Sleep(1000);
+			}
+		}
+		isAlive = false;
+		return IpResult;
 	}
 
 
@@ -176,14 +173,14 @@ public class Scanner
 	public Scanner(String ip)
 	{
 		IP = IPAddress.Parse(ip);
-		arp = new Arp(ip);
+		arp = new ArpWin(ip);
 		LoadIps();
 
 	}
 	public Scanner()
     {
 		GetIps();
-		arp = new Arp(IP.ToString());
+		arp = new ArpWin(IP.ToString());
 		LoadIps();
 	}
 }

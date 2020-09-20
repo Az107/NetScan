@@ -45,7 +45,7 @@ namespace netScan
             }
             scanner.foudIp += printIp;
             scanner.Start();
-            Console.WriteLine("finnished");
+            Console.WriteLine($"Finnished {scanner.IpResult.Count} ips found");
             
 
         }
